@@ -1,8 +1,4 @@
-// ==========================================
-//   WALLET.JS - MANAJEMEN SALDO
-// ==========================================
-
-const API_URL = window.API_URL || 'https://mika-store-backend.onrender.com/api';
+const API_URL = window.API_URL || window.location.origin + '/api';
 
 // ==========================================
 //   LOAD SALDO
@@ -10,8 +6,11 @@ const API_URL = window.API_URL || 'https://mika-store-backend.onrender.com/api';
 
 async function loadSaldo() {
   try {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
     const response = await fetch(`${API_URL}/wallet/balance`, {
-      credentials: 'include'
+      headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await response.json();
     
@@ -19,6 +18,8 @@ async function loadSaldo() {
       const display = document.getElementById('saldoDisplay');
       if (display) {
         display.textContent = `Rp ${data.data.saldo.toLocaleString()}`;
+        display.style.animation = 'none';
+        setTimeout(() => display.style.animation = 'pulseSaldo 2s ease-in-out infinite', 10);
       }
     }
   } catch (error) {
@@ -39,22 +40,28 @@ async function topupSaldo() {
   const amount = parseInt(input.value);
   
   if (!amount || amount < 10000) {
-    result.innerHTML = `<div class="alert alert-danger">Minimal topup Rp10.000</div>`;
+    result.innerHTML = `<div class="alert alert-danger">🌸 Minimal topup Rp10.000</div>`;
+    window.showToast('Minimal topup Rp10.000', 'error');
     return;
   }
   
   if (amount > 10000000) {
-    result.innerHTML = `<div class="alert alert-danger">Maksimal topup Rp10.000.000</div>`;
+    result.innerHTML = `<div class="alert alert-danger">🌸 Maksimal topup Rp10.000.000</div>`;
+    window.showToast('Maksimal topup Rp10.000.000', 'error');
     return;
   }
   
   result.innerHTML = `<div class="alert alert-info">⏳ Memproses topup...</div>`;
+  window.showToast('⏳ Memproses topup...', 'info');
   
   try {
+    const token = localStorage.getItem('token');
     const response = await fetch(`${API_URL}/wallet/topup`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({ amount })
     });
     
@@ -65,84 +72,27 @@ async function topupSaldo() {
       result.innerHTML = `
         <div class="alert alert-success">
           <strong>✅ Topup berhasil dibuat!</strong>
-          <p style="margin-top:8px;">
-            Scan QRIS di bawah ini untuk menyelesaikan pembayaran.
-          </p>
-          <p style="margin-top:4px;font-size:13px;color:var(--gray);">
-            Ref ID: ${d.reff_id}
-          </p>
+          <p style="margin-top:8px;">🌸 Scan QRIS di bawah ini untuk menyelesaikan pembayaran.</p>
+          <p style="font-size:13px;color:var(--pink-light);">🆔 Ref ID: ${d.reff_id}</p>
           <div style="margin:12px 0;text-align:center;">
-            <img src="${d.qr_image}" alt="QRIS" style="max-width:250px;border-radius:8px;">
+            <img src="${d.qr_image}" alt="QRIS" style="max-width:250px;border-radius:12px;box-shadow:var(--shadow);">
           </div>
-          <p style="font-size:13px;color:var(--gray);">
-            Total: Rp ${d.total.toLocaleString()} (termasuk fee Rp ${d.fee.toLocaleString()})
+          <p style="font-size:13px;color:var(--pink-light);">
+            💰 Total: Rp ${d.total.toLocaleString()} (termasuk fee Rp ${d.fee.toLocaleString()})
           </p>
-          <p style="font-size:13px;color:var(--gray);">
-            Expired: ${d.expired_at || '10 menit'}
-          </p>
-          <div style="margin-top:8px;">
-            <button onclick="cekTopupStatus('${d.reff_id}')" class="btn btn-primary" style="padding:8px 20px;font-size:13px;">
-              Cek Status
-            </button>
-          </div>
+          <p style="font-size:13px;color:var(--pink-light);">⏳ Expired: ${d.expired_at || '10 menit'}</p>
         </div>
       `;
       input.value = '';
+      window.showToast('✅ QRIS berhasil digenerate!', 'success');
     } else {
       result.innerHTML = `<div class="alert alert-danger">❌ ${data.message || 'Gagal topup'}</div>`;
+      window.showToast(`❌ ${data.message || 'Gagal topup'}`, 'error');
     }
   } catch (error) {
     console.error('Topup error:', error);
     result.innerHTML = `<div class="alert alert-danger">❌ Gagal menghubungi server</div>`;
-  }
-}
-
-// ==========================================
-//   CEK STATUS TOPUP
-// ==========================================
-
-async function cekTopupStatus(reffId) {
-  const result = document.getElementById('topupResult');
-  if (!result) return;
-  
-  result.innerHTML = `<div class="alert alert-info">⏳ Mengecek status...</div>`;
-  
-  try {
-    const response = await fetch(`${API_URL}/wallet/topup/status/${reffId}`, {
-      credentials: 'include'
-    });
-    const data = await response.json();
-    
-    if (data.status === 'success') {
-      const statusMap = {
-        'pending': '⏳ Menunggu pembayaran',
-        'success': '✅ Berhasil! Saldo sudah ditambahkan',
-        'failed': '❌ Gagal',
-        'expired': '⏰ Expired'
-      };
-      
-      result.innerHTML = `
-        <div class="alert alert-${data.data.status === 'success' ? 'success' : 'warning'}">
-          <strong>Status: ${statusMap[data.data.status] || data.data.status}</strong>
-          <p style="margin-top:4px;font-size:13px;color:var(--gray);">
-            Jumlah: Rp ${data.data.amount.toLocaleString()}
-          </p>
-          <p style="font-size:13px;color:var(--gray);">
-            Dibuat: ${new Date(data.data.createdAt).toLocaleString()}
-          </p>
-          ${data.data.completedAt ? `<p style="font-size:13px;color:var(--gray);">Selesai: ${new Date(data.data.completedAt).toLocaleString()}</p>` : ''}
-        </div>
-      `;
-      
-      if (data.data.status === 'success') {
-        loadSaldo();
-      }
-    } else {
-      result.innerHTML = `<div class="alert alert-danger">❌ ${data.message}</div>`;
-    }
-  } catch (error) {
-    console.error('Cek status error:', error);
-    result.innerHTML = `<div class="alert alert-danger">❌ Gagal cek status</div>`;
+    window.showToast('❌ Gagal menghubungi server', 'error');
   }
 }
 
@@ -155,39 +105,32 @@ async function loadTransactionHistory() {
   if (!container) return;
   
   try {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
     const response = await fetch(`${API_URL}/wallet/history`, {
-      credentials: 'include'
+      headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await response.json();
     
-    if (data.status === 'success' && data.data.transactions.length > 0) {
-      const statusMap = {
-        'pending': '⏳ Pending',
-        'success': '✅ Berhasil',
-        'failed': '❌ Gagal',
-        'expired': '⏰ Expired'
-      };
-      
-      container.innerHTML = data.data.transactions.map(t => `
-        <div style="padding:12px 0;border-bottom:1px solid #E2E8F0;display:flex;justify-content:space-between;align-items:center;">
-          <div>
-            <div style="font-weight:600;">${t.type === 'topup' ? '💰 Topup' : t.type}</div>
-            <div style="font-size:13px;color:var(--gray);">${new Date(t.createdAt).toLocaleString()}</div>
+    if (data.status === 'success' && data.data.length > 0) {
+      container.innerHTML = data.data.map(t => `
+        <div class="transaction-item">
+          <div class="info">
+            <span class="type">${t.type === 'topup' ? '🌸 Topup' : t.type}</span>
+            <span class="date">${new Date(t.createdAt).toLocaleString()}</span>
           </div>
-          <div style="text-align:right;">
-            <div style="font-weight:700;color:${t.type === 'topup' ? 'var(--secondary)' : 'var(--danger)'};">
-              ${t.type === 'topup' ? '+' : '-'} Rp ${t.amount.toLocaleString()}
-            </div>
-            <div style="font-size:12px;">${statusMap[t.status] || t.status}</div>
+          <div class="amount ${t.type === 'topup' ? 'positive' : 'negative'}">
+            ${t.type === 'topup' ? '+' : '-'} Rp ${t.amount.toLocaleString()}
           </div>
         </div>
       `).join('');
     } else {
-      container.innerHTML = `<p style="color:var(--gray);">Belum ada transaksi</p>`;
+      container.innerHTML = '<p class="empty-state">🌸 Belum ada transaksi</p>';
     }
   } catch (error) {
     console.error('Load history error:', error);
-    container.innerHTML = `<p style="color:var(--danger);">Gagal memuat riwayat</p>`;
+    container.innerHTML = '<p class="empty-state" style="color:#f44336;">❌ Gagal memuat riwayat</p>';
   }
 }
 
@@ -200,6 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTransactionHistory();
 });
 
-// Export untuk digunakan di HTML
+// ==========================================
+//   EXPOSE FUNCTIONS TO WINDOW
+// ==========================================
+
 window.topupSaldo = topupSaldo;
-window.cekTopupStatus = cekTopupStatus;
+window.loadSaldo = loadSaldo;
