@@ -1,7 +1,7 @@
 {
-  "name": "mika-store",
-  "version": "1.0.0",
-  "description": "Mika Store Full Stack on Vercel",
+  "name": "mika-store-pink",
+  "version": "2.0.0",
+  "description": "Mika Store - Pink Soft Full Stack",
   "main": "api/index.js",
   "scripts": {
     "start": "node api/index.js",
