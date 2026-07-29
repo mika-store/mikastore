@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mika Store</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="/assets/images/logo.png">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="/" class="logo">
+        <img src="/assets/images/logo.png" alt="Mika Store" height="40">
+        <span>Mika Store</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/" class="active">Home</a></li>
+        <li><a href="#products">Produk</a></li>
+        <li id="walletNav" style="display:none;"><a href="#wallet">💰 Saldo</a></li>
+        <li id="adminNav" style="display:none;"><a href="/admin.html" target="_blank">🔧 Admin</a></li>
+        <li id="authLinks">
+          <a href="/login.html" class="btn btn-nav">Login</a>
+          <a href="/register.html" class="btn btn-nav" style="background:#10B981!important;">Daftar</a>
+        </li>
+        <li id="userLinks" style="display:none;">
+          <span id="userName" style="color:var(--dark);font-weight:600;"></span>
+          <span id="userSaldo" style="color:var(--primary);font-weight:700;"></span>
+          <button onclick="logout()" class="btn btn-danger" style="padding:6px 16px;font-size:13px;">Logout</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <h1>Selamat Datang di <span>Mika Store</span></h1>
+      <p>Belanja kebutuhan digital dengan mudah dan aman</p>
+      <a href="#products" class="btn btn-primary">Lihat Produk</a>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section id="products" class="products">
+    <div class="container">
+      <h2>🛍️ Produk Kami</h2>
+      <div class="product-grid" id="productGrid">
+        <p style="grid-column:1/-1;text-align:center;color:var(--gray);">Loading produk...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wallet Section -->
+  <section id="wallet" class="wallet-section" style="display:none;">
+    <div class="container">
+      <h2>💰 Dompet Saya</h2>
+      <div class="card" style="max-width:500px;margin:20px auto;">
+        <h3>Saldo Anda</h3>
+        <div class="saldo-display" id="saldoDisplay">Rp 0</div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          <input type="number" id="topupAmount" placeholder="Masukkan nominal topup" min="10000" class="form-control" style="flex:1;">
+          <button onclick="topupSaldo()" class="btn btn-primary">Topup QRIS</button>
+        </div>
+        <div id="topupResult" style="margin-top:15px;"></div>
+      </div>
+      <div class="card" style="max-width:500px;margin:20px auto;">
+        <h3>📋 Riwayat Transaksi</h3>
+        <div id="transactionHistory">
+          <p style="color:var(--gray);">Belum ada transaksi</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Mika Store. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/wallet.js"></script>
+</body>
+</html>
