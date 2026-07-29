@@ -46,7 +46,7 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: ['https://mikastore.vercel.app', 'http://localhost:3000'],
+  origin: ['https://mikastore-7oij.vercel.app', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
