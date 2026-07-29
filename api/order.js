@@ -27,8 +27,8 @@ router.post('/create', async (req, res) => {
     }
 
     const totalAmount = product.price * quantity;
-
     const user = await User.findById(decoded.id);
+
     if (paymentMethod === 'saldo' && user.saldo < totalAmount) {
       return res.status(400).json({ status: 'error', message: 'Saldo tidak cukup' });
     }
