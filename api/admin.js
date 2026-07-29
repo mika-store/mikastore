@@ -16,10 +16,7 @@ const verifyAdmin = async (req) => {
   return user;
 };
 
-// ==========================================
-//   STATS
-// ==========================================
-
+// STATS
 router.get('/stats', async (req, res) => {
   try {
     await verifyAdmin(req);
@@ -37,10 +34,7 @@ router.get('/stats', async (req, res) => {
   }
 });
 
-// ==========================================
-//   GET ALL PRODUCTS (ADMIN)
-// ==========================================
-
+// GET ALL PRODUCTS (ADMIN)
 router.get('/products', async (req, res) => {
   try {
     await verifyAdmin(req);
@@ -51,10 +45,7 @@ router.get('/products', async (req, res) => {
   }
 });
 
-// ==========================================
-//   CREATE PRODUCT
-// ==========================================
-
+// CREATE PRODUCT
 router.post('/products', async (req, res) => {
   try {
     const admin = await verifyAdmin(req);
@@ -79,10 +70,7 @@ router.post('/products', async (req, res) => {
   }
 });
 
-// ==========================================
-//   TOGGLE PRODUCT
-// ==========================================
-
+// TOGGLE PRODUCT
 router.put('/products/:id/toggle', async (req, res) => {
   try {
     await verifyAdmin(req);
@@ -98,10 +86,7 @@ router.put('/products/:id/toggle', async (req, res) => {
   }
 });
 
-// ==========================================
-//   GET ALL ORDERS
-// ==========================================
-
+// GET ALL ORDERS
 router.get('/orders', async (req, res) => {
   try {
     await verifyAdmin(req);
@@ -115,10 +100,7 @@ router.get('/orders', async (req, res) => {
   }
 });
 
-// ==========================================
-//   UPDATE ORDER STATUS
-// ==========================================
-
+// UPDATE ORDER STATUS
 router.put('/orders/:id/status', async (req, res) => {
   try {
     await verifyAdmin(req);
@@ -138,10 +120,7 @@ router.put('/orders/:id/status', async (req, res) => {
   }
 });
 
-// ==========================================
-//   GET ALL USERS
-// ==========================================
-
+// GET ALL USERS
 router.get('/users', async (req, res) => {
   try {
     await verifyAdmin(req);
@@ -152,10 +131,7 @@ router.get('/users', async (req, res) => {
   }
 });
 
-// ==========================================
-//   TOGGLE USER
-// ==========================================
-
+// TOGGLE USER
 router.put('/users/:id/toggle', async (req, res) => {
   try {
     await verifyAdmin(req);
