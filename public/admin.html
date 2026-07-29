@@ -3,60 +3,294 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Mika Store</title>
+  <title>🌸 Admin - Mika Store</title>
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin.css">
+  <style>
+    .admin-container { display: flex; min-height: 100vh; }
+    .admin-sidebar {
+      width: 220px;
+      background: var(--dark);
+      color: var(--white);
+      padding: 20px 0;
+      min-height: 100vh;
+    }
+    .admin-sidebar .logo { padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--white); font-weight: 700; font-size: 20px; }
+    .admin-sidebar .logo span { color: var(--pink); }
+    .admin-sidebar .menu a {
+      display: block;
+      padding: 12px 20px;
+      color: rgba(255,255,255,0.7);
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .admin-sidebar .menu a:hover,
+    .admin-sidebar .menu a.active {
+      background: rgba(255,105,180,0.2);
+      color: var(--white);
+    }
+    .admin-content { flex: 1; padding: 30px; background: var(--pink-soft); }
+    .admin-content h1 { font-size: 28px; margin-bottom: 24px; color: var(--dark); }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 30px; }
+    .stat-card { background: var(--white); padding: 16px 20px; border-radius: var(--radius); box-shadow: var(--shadow); transition: var(--transition); }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+    .stat-card .label { font-size: 13px; color: var(--pink-light); }
+    .stat-card .value { font-size: 24px; font-weight: 700; color: var(--dark); }
+    .table-responsive { overflow-x: auto; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #E2E8F0; }
+    th { background: var(--pink-soft); font-weight: 600; }
+    .badge { display: inline-block; padding: 2px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+    .badge-success { background: #E8F5E9; color: #2E7D32; }
+    .badge-danger { background: #FFEBEE; color: #C62828; }
+    .badge-warning { background: #FFF3E0; color: #E65100; }
+    .badge-info { background: #E3F2FD; color: #0D47A1; }
+    @media (max-width: 768px) {
+      .admin-sidebar { width: 60px; }
+      .admin-sidebar .logo span, .admin-sidebar .menu a span { display: none; }
+      .admin-content { padding: 16px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
 </head>
 <body>
   <div class="admin-container">
-    <!-- Sidebar -->
     <aside class="admin-sidebar">
-      <div class="logo">
-        <span>Mika Store</span>
-        <small style="display:block;font-size:12px;opacity:0.6;">Admin Panel</small>
-      </div>
+      <div class="logo">🌸 <span>Mika</span></div>
       <nav class="menu">
-        <a href="#" class="active" onclick="loadDashboard()">📊 Dashboard</a>
-        <a href="#" onclick="loadProducts()">📦 Produk</a>
-        <a href="#" onclick="loadOrders()">📋 Pesanan</a>
-        <a href="#" onclick="loadUsers()">👤 Users</a>
-        <a href="/" target="_blank">🏪 Lihat Toko</a>
-        <a href="#" onclick="logout()" style="color:var(--danger);">🚪 Logout</a>
+        <a href="#" onclick="loadDashboard()" class="active"><span>📊 Dashboard</span></a>
+        <a href="#" onclick="loadProducts()"><span>📦 Produk</span></a>
+        <a href="#" onclick="loadOrders()"><span>📋 Pesanan</span></a>
+        <a href="#" onclick="loadUsers()"><span>👤 Users</span></a>
+        <a href="/"><span>🏪 Toko</span></a>
+        <a href="#" onclick="logoutAdmin()" style="color:var(--pink);"><span>🚪 Logout</span></a>
       </nav>
     </aside>
 
-    <!-- Content -->
     <main class="admin-content">
-      <h1 id="adminTitle">Dashboard</h1>
+      <h1 id="adminTitle">📊 Dashboard</h1>
       <div id="adminContent">
         <div class="stats-grid" id="statsGrid">
-          <div class="stat-card">
-            <div class="label">Total Produk</div>
-            <div class="value" id="statProducts">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="label">Total Pesanan</div>
-            <div class="value" id="statOrders">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="label">Total User</div>
-            <div class="value" id="statUsers">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="label">Pendapatan</div>
-            <div class="value" id="statRevenue">Rp 0</div>
-          </div>
+          <div class="stat-card"><div class="label">🌸 Total Produk</div><div class="value" id="statProducts">0</div></div>
+          <div class="stat-card"><div class="label">🌸 Total Pesanan</div><div class="value" id="statOrders">0</div></div>
+          <div class="stat-card"><div class="label">🌸 Total User</div><div class="value" id="statUsers">0</div></div>
         </div>
-        <div class="card">
-          <h3>📋 Pesanan Terbaru</h3>
-          <div id="recentOrders">
-            <p style="color:var(--gray);">Loading...</p>
-          </div>
-        </div>
+        <div class="table-responsive"><h3>📋 Pesanan Terbaru</h3><div id="recentOrders"><p>🌸 Loading...</p></div></div>
       </div>
     </main>
   </div>
 
-  <script src="/js/admin.js"></script>
+  <script>
+    const API_URL = window.location.origin + '/api';
+
+    function getToken() { return localStorage.getItem('token'); }
+
+    async function checkAdmin() {
+      const token = getToken();
+      if (!token) { window.location.href = '/login.html'; return null; }
+      try {
+        const res = await fetch(`${API_URL}/auth/me`, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) { window.location.href = '/login.html'; return null; }
+        const data = await res.json();
+        if (data.data.role !== 'admin' && data.data.role !== 'superadmin') { window.location.href = '/'; return null; }
+        return data.data;
+      } catch(e) { window.location.href = '/login.html'; return null; }
+    }
+
+    async function loadDashboard() {
+      document.getElementById('adminTitle').textContent = '📊 Dashboard';
+      try {
+        const token = getToken();
+        const [statsRes, ordersRes] = await Promise.all([
+          fetch(`${API_URL}/admin/stats`, { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch(`${API_URL}/admin/orders?limit=10`, { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
+        const stats = await statsRes.json();
+        const orders = await ordersRes.json();
+        
+        document.getElementById('statProducts').textContent = stats.data?.products || 0;
+        document.getElementById('statOrders').textContent = stats.data?.orders || 0;
+        document.getElementById('statUsers').textContent = stats.data?.users || 0;
+
+        const container = document.getElementById('recentOrders');
+        if (orders.status === 'success' && orders.data.length > 0) {
+          container.innerHTML = `<table><thead><tr><th>Order</th><th>User</th><th>Total</th><th>Status</th></tr></thead><tbody>
+            ${orders.data.map(o => `
+              <tr><td>${o.orderNumber}</td><td>${o.user?.username || '-'}</td>
+              <td>Rp ${o.totalAmount.toLocaleString()}</td>
+              <td><span class="badge badge-${o.orderStatus === 'delivered' ? 'success' : o.orderStatus === 'cancelled' ? 'danger' : 'warning'}">${o.orderStatus}</span></td></tr>
+            `).join('')}</tbody></table>`;
+        } else { container.innerHTML = '<p>🌸 Belum ada pesanan</p>'; }
+      } catch(e) { console.error(e); }
+    }
+
+    async function loadProducts() {
+      document.getElementById('adminTitle').textContent = '📦 Manajemen Produk';
+      try {
+        const token = getToken();
+        const res = await fetch(`${API_URL}/admin/products`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await res.json();
+        document.getElementById('adminContent').innerHTML = `
+          <div style="margin-bottom:16px;"><button onclick="showAddProduct()" class="btn btn-pink" style="padding:10px 24px;">🌸 + Tambah Produk</button></div>
+          <div class="table-responsive"><table><thead><tr><th>Nama</th><th>Harga</th><th>Stok</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+            ${data.data.map(p => `
+              <tr><td>${p.name}</td><td>Rp ${p.price.toLocaleString()}</td>
+              <td>${p.stock}</td>
+              <td><span class="badge badge-${p.isActive ? 'success' : 'danger'}">${p.isActive ? '🌸 Aktif' : '⛔ Nonaktif'}</span></td>
+              <td><button onclick="toggleProduct('${p._id}')" class="btn btn-${p.isActive ? 'btn-pink' : 'btn-soft'}" style="padding:4px 16px;font-size:13px;">${p.isActive ? '⛔ Nonaktifkan' : '🌸 Aktifkan'}</button></td></tr>
+            `).join('')}</tbody></table></div>
+        `;
+      } catch(e) { console.error(e); }
+    }
+
+    function showAddProduct() {
+      document.getElementById('adminContent').innerHTML = `
+        <div class="wallet-card" style="max-width:600px;margin:0 auto;"><h3>🌸 Tambah Produk</h3>
+        <form onsubmit="handleAddProduct(event)">
+          <div class="form-group"><label>📦 Nama</label><input type="text" id="prodName" class="form-control" required></div>
+          <div class="form-group"><label>📝 Deskripsi</label><textarea id="prodDesc" class="form-control" rows="3" required></textarea></div>
+          <div class="form-group"><label>💰 Harga</label><input type="number" id="prodPrice" class="form-control" min="0" required></div>
+          <div class="form-group"><label>📊 Stok</label><input type="number" id="prodStock" class="form-control" min="0" required></div>
+          <div class="form-group"><label>📂 Kategori</label>
+            <select id="prodCategory" class="form-control">
+              <option value="electronics">📱 Electronics</option><option value="fashion">👗 Fashion</option>
+              <option value="food">🍕 Food</option><option value="digital">💻 Digital</option>
+              <option value="service">🛠️ Service</option><option value="other">🌸 Other</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-pink">🌸 Simpan</button>
+          <button type="button" onclick="loadProducts()" class="btn btn-soft">❌ Batal</button>
+        </form></div>
+      `;
+    }
+
+    async function handleAddProduct(e) {
+      e.preventDefault();
+      const token = getToken();
+      const name = document.getElementById('prodName').value;
+      const description = document.getElementById('prodDesc').value;
+      const price = parseInt(document.getElementById('prodPrice').value);
+      const stock = parseInt(document.getElementById('prodStock').value);
+      const category = document.getElementById('prodCategory').value;
+      try {
+        const res = await fetch(`${API_URL}/admin/products`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ name, description, price, stock, category })
+        });
+        const data = await res.json();
+        if (data.status === 'success') { alert('🌸 Produk ditambahkan!'); loadProducts(); }
+        else { alert(`❌ ${data.message}`); }
+      } catch(e) { alert('❌ Gagal menambahkan produk'); }
+    }
+
+    async function toggleProduct(id) {
+      if (!confirm('🌸 Yakin ingin mengubah status produk ini?')) return;
+      try {
+        const token = getToken();
+        const res = await fetch(`${API_URL}/admin/products/${id}/toggle`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.status === 'success') { loadProducts(); }
+        else { alert(`❌ ${data.message}`); }
+      } catch(e) { alert('❌ Gagal mengubah status'); }
+    }
+
+    async function loadOrders() {
+      document.getElementById('adminTitle').textContent = '📋 Manajemen Pesanan';
+      try {
+        const token = getToken();
+        const res = await fetch(`${API_URL}/admin/orders`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await res.json();
+        document.getElementById('adminContent').innerHTML = `
+          <div class="table-responsive"><table><thead><tr><th>Order</th><th>User</th><th>Items</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+            ${data.data.map(o => `
+              <tr><td>${o.orderNumber}</td><td>${o.user?.username || '-'}</td>
+              <td>${o.items.length}</td>
+              <td>Rp ${o.totalAmount.toLocaleString()}</td>
+              <td><span class="badge badge-${o.orderStatus === 'delivered' ? 'success' : o.orderStatus === 'cancelled' ? 'danger' : 'warning'}">${o.orderStatus}</span></td>
+              <td>
+                <select onchange="updateOrderStatus('${o._id}', this.value)" class="form-control" style="padding:4px 8px;font-size:12px;width:auto;">
+                  <option value="pending" ${o.orderStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                  <option value="processing" ${o.orderStatus === 'processing' ? 'selected' : ''}>Processing</option>
+                  <option value="shipped" ${o.orderStatus === 'shipped' ? 'selected' : ''}>Shipped</option>
+                  <option value="delivered" ${o.orderStatus === 'delivered' ? 'selected' : ''}>Delivered</option>
+                  <option value="cancelled" ${o.orderStatus === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                </select>
+              </td></tr>
+            `).join('')}</tbody></table></div>
+        `;
+      } catch(e) { console.error(e); }
+    }
+
+    async function updateOrderStatus(orderId, status) {
+      try {
+        const token = getToken();
+        const res = await fetch(`${API_URL}/admin/orders/${orderId}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ status })
+        });
+        const data = await res.json();
+        if (data.status !== 'success') { alert(`❌ ${data.message}`); }
+        loadOrders();
+      } catch(e) { alert('❌ Gagal mengupdate status'); }
+    }
+
+    async function loadUsers() {
+      document.getElementById('adminTitle').textContent = '👤 Manajemen User';
+      try {
+        const token = getToken();
+        const res = await fetch(`${API_URL}/admin/users`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await res.json();
+        document.getElementById('adminContent').innerHTML = `
+          <div class="table-responsive"><table><thead><tr><th>Username</th><th>Email</th><th>Saldo</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+            ${data.data.map(u => `
+              <tr><td>${u.username}</td><td>${u.email}</td>
+              <td>Rp ${(u.saldo || 0).toLocaleString()}</td>
+              <td><span class="badge badge-${u.role === 'admin' ? 'warning' : 'info'}">${u.role}</span></td>
+              <td><span class="badge badge-${u.isActive ? 'success' : 'danger'}">${u.isActive ? '🌸 Aktif' : '⛔ Nonaktif'}</span></td>
+              <td><button onclick="toggleUser('${u._id}')" class="btn btn-${u.isActive ? 'btn-pink' : 'btn-soft'}" style="padding:4px 16px;font-size:13px;">${u.isActive ? '⛔ Nonaktifkan' : '🌸 Aktifkan'}</button></td></tr>
+            `).join('')}</tbody></table></div>
+        `;
+      } catch(e) { console.error(e); }
+    }
+
+    async function toggleUser(userId) {
+      if (!confirm('🌸 Yakin ingin mengubah status user ini?')) return;
+      try {
+        const token = getToken();
+        const res = await fetch(`${API_URL}/admin/users/${userId}/toggle`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.status === 'success') { loadUsers(); }
+        else { alert(`❌ ${data.message}`); }
+      } catch(e) { alert('❌ Gagal mengubah status'); }
+    }
+
+    async function logoutAdmin() {
+      localStorage.removeItem('token');
+      window.location.href = '/';
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const user = await checkAdmin();
+      if (user) loadDashboard();
+    });
+
+    window.loadDashboard = loadDashboard;
+    window.loadProducts = loadProducts;
+    window.loadOrders = loadOrders;
+    window.loadUsers = loadUsers;
+    window.showAddProduct = showAddProduct;
+    window.handleAddProduct = handleAddProduct;
+    window.toggleProduct = toggleProduct;
+    window.updateOrderStatus = updateOrderStatus;
+    window.toggleUser = toggleUser;
+    window.logoutAdmin = logoutAdmin;
+  </script>
 </body>
 </html>
