@@ -3,31 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mika Store</title>
+  <title>🌸 Mika Store</title>
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="icon" href="/assets/images/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Floating Hearts Background -->
+  <div class="floating-hearts" id="floatingHearts"></div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
   <!-- Navbar -->
   <nav class="navbar" id="navbar">
     <div class="container">
-      <a href="/" class="logo">
-        <img src="/assets/images/logo.png" alt="Mika Store" height="40">
-        <span>Mika Store</span>
-      </a>
+      <a href="/" class="logo">🌸 <span>Mika</span>Store</a>
       <ul class="nav-links" id="navLinks">
         <li><a href="/" class="active">Home</a></li>
         <li><a href="#products">Produk</a></li>
         <li id="walletNav" style="display:none;"><a href="#wallet">💰 Saldo</a></li>
-        <li id="adminNav" style="display:none;"><a href="/admin.html" target="_blank">🔧 Admin</a></li>
+        <li id="adminNav" style="display:none;"><a href="/admin.html">🔧 Admin</a></li>
         <li id="authLinks">
-          <a href="/login.html" class="btn btn-nav">Login</a>
-          <a href="/register.html" class="btn btn-nav" style="background:#10B981!important;">Daftar</a>
+          <a href="/login.html" class="btn-nav btn-pink">🌸 Login</a>
+          <a href="/register.html" class="btn-nav btn-soft">✨ Daftar</a>
         </li>
         <li id="userLinks" style="display:none;">
-          <span id="userName" style="color:var(--dark);font-weight:600;"></span>
-          <span id="userSaldo" style="color:var(--primary);font-weight:700;"></span>
-          <button onclick="logout()" class="btn btn-danger" style="padding:6px 16px;font-size:13px;">Logout</button>
+          <span id="userName" class="username"></span>
+          <span id="userSaldo" class="saldo-badge"></span>
+          <button onclick="logout()" class="btn-logout">🚪</button>
         </li>
       </ul>
     </div>
@@ -36,9 +39,11 @@
   <!-- Hero -->
   <section class="hero">
     <div class="container">
-      <h1>Selamat Datang di <span>Mika Store</span></h1>
-      <p>Belanja kebutuhan digital dengan mudah dan aman</p>
-      <a href="#products" class="btn btn-primary">Lihat Produk</a>
+      <div class="hero-content">
+        <h1>🌸 Selamat Datang di <span>Mika Store</span></h1>
+        <p>Belanja kebutuhan digital dengan <span class="highlight">mudah</span> dan <span class="highlight">aman</span> ✨</p>
+        <a href="#products" class="btn btn-hero">✨ Lihat Produk</a>
+      </div>
     </div>
   </section>
 
@@ -47,29 +52,26 @@
     <div class="container">
       <h2>🛍️ Produk Kami</h2>
       <div class="product-grid" id="productGrid">
-        <p style="grid-column:1/-1;text-align:center;color:var(--gray);">Loading produk...</p>
+        <div class="loading-spinner"></div>
       </div>
     </div>
   </section>
 
-  <!-- Wallet Section -->
+  <!-- Wallet -->
   <section id="wallet" class="wallet-section" style="display:none;">
     <div class="container">
       <h2>💰 Dompet Saya</h2>
-      <div class="card" style="max-width:500px;margin:20px auto;">
-        <h3>Saldo Anda</h3>
+      <div class="wallet-card">
         <div class="saldo-display" id="saldoDisplay">Rp 0</div>
-        <div style="display:flex;gap:10px;margin-top:20px;">
-          <input type="number" id="topupAmount" placeholder="Masukkan nominal topup" min="10000" class="form-control" style="flex:1;">
-          <button onclick="topupSaldo()" class="btn btn-primary">Topup QRIS</button>
+        <div class="topup-section">
+          <input type="number" id="topupAmount" placeholder="Nominal topup..." min="10000" class="form-control">
+          <button onclick="topupSaldo()" class="btn btn-pink">💳 Topup QRIS</button>
         </div>
-        <div id="topupResult" style="margin-top:15px;"></div>
+        <div id="topupResult"></div>
       </div>
-      <div class="card" style="max-width:500px;margin:20px auto;">
+      <div class="history-card">
         <h3>📋 Riwayat Transaksi</h3>
-        <div id="transactionHistory">
-          <p style="color:var(--gray);">Belum ada transaksi</p>
-        </div>
+        <div id="transactionHistory"><p class="empty-state">🌸 Belum ada transaksi</p></div>
       </div>
     </div>
   </section>
@@ -77,10 +79,24 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2026 Mika Store. All rights reserved.</p>
+      <p>🌸 Mika Store &copy; 2026 - Made with 💖</p>
     </div>
   </footer>
 
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">🌸 Detail Produk</h3>
+        <button onclick="closeModal()" class="modal-close">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin + '/api';
+  </script>
   <script src="/js/main.js"></script>
   <script src="/js/wallet.js"></script>
 </body>
