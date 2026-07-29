@@ -20,9 +20,7 @@ if (process.env.MONGODB_URI) {
     useUnifiedTopology: true,
   })
   .then(() => console.log('✅ MongoDB Connected'))
-  .catch(err => console.error('❌ MongoDB Error:', err));
-} else {
-  console.log('⚠️ MONGODB_URI not set, running in mock mode');
+  .catch(err => console.error('❌ MongoDB Error:', err.message));
 }
 
 // ==========================================
@@ -46,7 +44,7 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: ['https://mikastore-7oij.vercel.app', 'http://localhost:3000'],
+  origin: ['https://mikastore.vercel.app', 'https://mikastore-7oij.vercel.app', 'http://localhost:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -114,9 +112,5 @@ app.use((err, req, res, next) => {
     message: process.env.NODE_ENV === 'production' ? 'Terjadi kesalahan server' : err.message
   });
 });
-
-// ==========================================
-//   EXPORT UNTUK VERCEL
-// ==========================================
 
 module.exports = app;
