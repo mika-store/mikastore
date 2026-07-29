@@ -3,41 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar - Mika Store</title>
+  <title>🌸 Daftar - Mika Store</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+  <div class="floating-hearts" id="floatingHearts"></div>
+
   <div class="container" style="max-width:400px;margin:60px auto;">
-    <div class="card">
-      <h2 style="text-align:center;margin-bottom:24px;">📝 Daftar Akun</h2>
+    <div class="wallet-card">
+      <h2 style="text-align:center;margin-bottom:8px;">🌸 Daftar Akun</h2>
+      <p style="text-align:center;color:var(--pink-light);margin-bottom:24px;">Gabung jadi bagian Mika Store</p>
       <form id="registerForm" onsubmit="handleRegister(event)">
         <div class="form-group">
-          <label>Username <span class="required">*</span></label>
+          <label>👤 Username</label>
           <input type="text" id="username" class="form-control" placeholder="username" required minlength="3">
         </div>
         <div class="form-group">
-          <label>Email <span class="required">*</span></label>
+          <label>📧 Email</label>
           <input type="email" id="email" class="form-control" placeholder="email@example.com" required>
         </div>
         <div class="form-group">
-          <label>Password <span class="required">*</span></label>
+          <label>🔒 Password</label>
           <input type="password" id="password" class="form-control" placeholder="Minimal 8 karakter" required minlength="8">
         </div>
         <div class="form-group">
-          <label>Konfirmasi Password <span class="required">*</span></label>
+          <label>🔒 Konfirmasi Password</label>
           <input type="password" id="confirmPassword" class="form-control" placeholder="Ulangi password" required>
         </div>
-        <div id="registerError" style="display:none;color:var(--danger);margin-bottom:12px;"></div>
-        <button type="submit" class="btn btn-secondary" style="width:100%;justify-content:center;">Daftar</button>
-        <p style="text-align:center;margin-top:16px;color:var(--gray);">
-          Sudah punya akun? <a href="/login.html" style="color:var(--primary);font-weight:600;">Login</a>
+        <div id="registerError" style="display:none;color:#f44336;margin-bottom:12px;"></div>
+        <button type="submit" class="btn btn-soft" style="width:100%;padding:14px;font-size:16px;">🌸 Daftar</button>
+        <p style="text-align:center;margin-top:16px;color:var(--pink-light);">
+          Sudah punya akun? <a href="/login.html" style="color:var(--pink);font-weight:600;">Login</a>
         </p>
       </form>
     </div>
   </div>
 
   <script>
-    const API_URL = 'https://mika-store-backend.onrender.com/api';
+    const API_URL = window.location.origin + '/api';
+
+    // Create floating hearts
+    function createHearts() {
+      const container = document.getElementById('floatingHearts');
+      if (!container) return;
+      const emojis = ['🌸', '💖', '✨', '🦋', '🌺'];
+      for (let i = 0; i < 12; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.fontSize = (Math.random() * 18 + 12) + 'px';
+        heart.style.animationDuration = (Math.random() * 15 + 10) + 's';
+        heart.style.animationDelay = (Math.random() * 20) + 's';
+        container.appendChild(heart);
+      }
+    }
+    createHearts();
 
     async function handleRegister(e) {
       e.preventDefault();
@@ -50,7 +71,7 @@
       errorDiv.style.display = 'none';
       
       if (password !== confirmPassword) {
-        errorDiv.textContent = 'Password dan konfirmasi tidak sama';
+        errorDiv.textContent = '🌸 Password dan konfirmasi tidak sama!';
         errorDiv.style.display = 'block';
         return;
       }
@@ -59,20 +80,20 @@
         const response = await fetch(`${API_URL}/auth/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
           body: JSON.stringify({ username, email, password, confirmPassword })
         });
         
         const data = await response.json();
         
         if (data.status === 'success') {
+          localStorage.setItem('token', data.data.token);
           window.location.href = '/';
         } else {
-          errorDiv.textContent = data.message || data.errors?.map(e => e.message).join(', ') || 'Registrasi gagal';
+          errorDiv.textContent = data.message || data.errors?.map(e => e.message).join(', ') || '🌸 Registrasi gagal!';
           errorDiv.style.display = 'block';
         }
       } catch (error) {
-        errorDiv.textContent = 'Gagal menghubungi server';
+        errorDiv.textContent = '🌸 Gagal menghubungi server';
         errorDiv.style.display = 'block';
       }
     }
